@@ -12,10 +12,14 @@ class HomePageTest(TestCase):
         found = resolve('/')
         self.assertEqual(found.func, home_page)
 
-    def test_home_page_returns_correct_html(self):
+    def test_home_page_uses_home_template(self):
         response = self.client.get('/')
         """html = response.content.decode('utf8')
         self.assertTrue(html.startswith('<!DOCTYPE html>\n<html lang="en"'))
         self.assertIn('<title>To-Do Lists</title>', html)
         self.assertTrue(html.endswith('</html>'))"""
         self.assertTemplateUsed(response, 'home.html')
+
+    def test_can_save_a_POST_request(self):
+        response = self.client.post('/', data={'item_test': 'A new list item'})
+        self.assertIn('A new list item', response.content.decode())

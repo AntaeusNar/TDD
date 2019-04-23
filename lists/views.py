@@ -6,7 +6,7 @@ from lists.models import Item
 
 
 def home_page(request):
-    # Todo: Don't save a black item for every request
+    # Todo: Don't save a blank item for every request
     item = Item()
     item.text = request.POST.get('item_text', '')
     item.save()

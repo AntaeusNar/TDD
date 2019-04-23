@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.http import HttpResponse
 from lists.models import Item
 
@@ -6,11 +6,10 @@ from lists.models import Item
 
 
 def home_page(request):
-    # Todo: Don't save a blank item for every request
-    item = Item()
-    item.text = request.POST.get('item_text', '')
-    item.save()
+    if request.method == 'POST':
+        Item.objects.create(text=request.POST['item_text'])
+        return redirect('/')
 
-    context = {'new_item_text': item.text}
-    # Todo: Display multiple items in the table
+    items = Item.objects.all()
+    context = {'items': items}
     return render(request, 'home.html', context)

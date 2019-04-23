@@ -35,6 +35,7 @@ class HomePageTest(TestCase):
     def test_displays_all_list_items(self):
         Item.objects.create(text='itemey 1')
         Item.objects.create(text='itemey 2')
+        self.assertEqual(Item.objects.count(), 2)
 
         response = self.client.get('/')
 

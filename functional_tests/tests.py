@@ -8,6 +8,7 @@ from selenium import webdriver
 from selenium.common.exceptions import WebDriverException, NoSuchElementException
 from selenium.webdriver.common.keys import Keys
 import time
+import re
 
 MAX_WAIT = 10
 
@@ -89,7 +90,9 @@ class NewVisitorTest(LiveServerTestCase):
 
         # She rushes back to the computer to see if there is a unique URL!
         # Then she sees that the site has generated a unique URL for her.
-        edith_list_url = self.browser.current_url
+        pattern = '(/lists/.+)'
+        ending_url = re.search(pattern, self.browser.current_url)
+        edith_list_url = ending_url.group(1)
         self.assertRegex(edith_list_url, '/lists/.+')
 
         # Now a new user, Francis, comes along to the site.
@@ -112,11 +115,13 @@ class NewVisitorTest(LiveServerTestCase):
         self.helper_wait_for_row_in_table('1: Buy milk')
 
         # Francis gets his own url
-        francis_list_url = self.browser.current_url
+        pattern = '(/lists/.+)'
+        ending_url = re.search(pattern, self.browser.current_url)
+        francis_list_url = ending_url.group(1)
         self.assertRegex(francis_list_url, '/lists/.+')
         self.assertNotEqual(francis_list_url, edith_list_url)
 
-        # Agian, there is no trace of Edith's list
+        # Again, there is no trace of Edith's list
         page_text = self.browser.find_element_by_tag_name('body').text
         self.assertNotIn('Buy peacock feathers', page_text)
         self.assertIn('Buy milk', page_text)

@@ -5,7 +5,7 @@ each section should follow an human readable 'user story'
 
 from django.test import LiveServerTestCase
 from selenium import webdriver
-from selenium.common.exceptions import WebDriverException
+from selenium.common.exceptions import WebDriverException, NoSuchElementException
 from selenium.webdriver.common.keys import Keys
 import time
 
@@ -32,9 +32,9 @@ class NewVisitorTest(LiveServerTestCase):
                 rows = table.find_elements_by_tag_name('tr')
                 self.assertIn(row_text, [row.text for row in rows])
                 return
-            except (AssertionError, WebDriverException) as e:
+            except (AssertionError, WebDriverException, NoSuchElementException) as e:
                 if time.time() - start_time > MAX_WAIT:
-                    raise e
+                    self.fail(e)
                 time.sleep(0.5)
 
     def test_can_start_a_list_for_one_user(self):

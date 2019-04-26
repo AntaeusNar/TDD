@@ -32,9 +32,13 @@ class NewVisitorTest(LiveServerTestCase):
                 rows = table.find_elements_by_tag_name('tr')
                 self.assertIn(row_text, [row.text for row in rows])
                 return
-            except (AssertionError, WebDriverException, NoSuchElementException) as e:
+            except (WebDriverException, NoSuchElementException) as e:
                 if time.time() - start_time > MAX_WAIT:
                     self.fail(e)
+                time.sleep(0.5)
+            except AssertionError as e:
+                if time.time() - start_time > MAX_WAIT:
+                    raise e
                 time.sleep(0.5)
 
     def test_can_start_a_list_for_one_user(self):
@@ -92,7 +96,8 @@ class NewVisitorTest(LiveServerTestCase):
 
         # We use a new browser session to make sure the no information of Edith's is
         # coming through from cookies etc
-        self.helper_restart_browser()
+        self.browser.quit()
+        self.browser = webdriver.Firefox()
 
         # Francis visits the home page. There is no sign of Edith's list
         self.browser.get(self.live_server_url)
@@ -102,7 +107,7 @@ class NewVisitorTest(LiveServerTestCase):
 
         # Francis starts a new list by entering a new item.
         inputbox = self.browser.find_element_by_id('id_new_item')
-        inputbox.send_key('Buy milk')
+        inputbox.send_keys('Buy milk')
         inputbox.send_keys(Keys.ENTER)
         self.helper_wait_for_row_in_table('1: Buy milk')
 
@@ -112,7 +117,7 @@ class NewVisitorTest(LiveServerTestCase):
         self.assertNotEqual(francis_list_url, edith_list_url)
 
         # Agian, there is no trace of Edith's list
-        page_text=self.browser.find_element_by_tag_name('body').text
+        page_text = self.browser.find_element_by_tag_name('body').text
         self.assertNotIn('Buy peacock feathers', page_text)
         self.assertIn('Buy milk', page_text)
 

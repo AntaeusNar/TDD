@@ -7,7 +7,7 @@ from lists.models import Item
 # Create your tests here.
 
 
-class HomePageTest(TestCase):
+class HomePageViewTest(TestCase):
 
     def test_root_url_resolves_to_home_page_view(self):
         found = resolve('/')
@@ -31,16 +31,6 @@ class HomePageTest(TestCase):
     def test_only_saves_items_when_necessary(self):
         self.client.get('/')
         self.assertEqual(Item.objects.count(), 0, 'Home Page Saved Items when not passed any')
-
-    def test_displays_all_list_items(self):
-        Item.objects.create(text='itemey 1')
-        Item.objects.create(text='itemey 2')
-        self.assertEqual(Item.objects.count(), 2)
-
-        response = self.client.get('/')
-
-        self.assertContains(response, 'itemey 1')
-        self.assertContains(response, 'itemey 2')
 
 
 class ItemModelTest(TestCase):

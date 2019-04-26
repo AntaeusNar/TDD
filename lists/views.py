@@ -13,3 +13,10 @@ def home_page(request):
     items = Item.objects.all()
     context = {'items': items}
     return render(request, 'home.html', context)
+
+
+def view_list(request):
+
+    items = Item.objects.all()
+    context = {'items': items}
+    return render(request, 'home.html', context)

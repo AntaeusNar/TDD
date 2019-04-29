@@ -117,3 +117,4 @@ pins.json
 
 # Django
 settings_secret.py
+settings/
